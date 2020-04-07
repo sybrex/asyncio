@@ -89,14 +89,17 @@ def main():
     parser.add_argument('--count', type=int, default=5, help='Number of events')
     args = parser.parse_args()
 
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    server.bind((args.host, args.port))
-    server.listen(8)
-    server.setblocking(False)
+    try:
+        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server.bind((args.host, args.port))
+        server.listen(8)
+        server.setblocking(False)
 
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(run_server(loop, server, args.count))
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(run_server(loop, server, args.count))
+    except KeyboardInterrupt:
+        server.close()
 
 
 if __name__ == '__main__':

@@ -1,5 +1,6 @@
 from fastapi import FastAPI, WebSocket
 from fastapi.responses import HTMLResponse
+import asyncio
 
 
 app = FastAPI()
@@ -19,7 +20,7 @@ html = """
         <ul id='messages'>
         </ul>
         <script>
-            var ws = new WebSocket("ws://localhost:8001/ws");
+            var ws = new WebSocket("ws://localhost:8000/ws");
             ws.onmessage = function(event) {
                 var messages = document.getElementById('messages')
                 var message = document.createElement('li')
@@ -47,6 +48,7 @@ async def get():
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
+    feed, _ = await asyncio.open_connection('localhost', 5000)
     while True:
-        data = await websocket.receive_text()
-        await websocket.send_text(f"{data}")
+        data = await feed.read(512)
+        await websocket.send_text(data.decode())
