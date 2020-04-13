@@ -22,7 +22,7 @@ MARKETS = [
 # Match duration 90 min
 DURATION = 5400
 # Delay between updates 1-5 sec
-DELAY = 3
+DELAY = 5
 
 
 class FootballEvent:
@@ -49,6 +49,8 @@ class FootballEvent:
     def update(self, seconds):
         self.state = random.choice(STATES)
         self.time = self.time + seconds
+        if self.time > DURATION:
+            self.time = 1
         self.generated = time.time()
         for index, market in enumerate(self.markets):
             for bet, odds in market['bets'].items():
