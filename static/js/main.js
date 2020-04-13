@@ -1,33 +1,33 @@
 $(function() {
     let ws = new WebSocket("ws://localhost:8000/ws");
     ws.onmessage = function(message) {
-        event = JSON.parse(message.data);
-        if ($('#event_'+event.id).length) {
-            if ($('#time_'+event.id) != event.time) {
-                $('#time_'+event.id).html(event.time);
+        game = JSON.parse(message.data);
+        if ($('#game_'+game.id).length) {
+            if ($('#time_'+game.id) != game.time) {
+                $('#time_'+game.id).html(game.time);
             }
-            if ($('#home_'+event.id) != event.markets[0]['bets']['1']) {
-                update_odds($('#home_'+event.id), event.markets[0]['bets']['1'])
+            if ($('#home_'+game.id) != game.markets[0]['bets']['1']) {
+                update_odds($('#home_'+game.id), game.markets[0]['bets']['1'])
             }
-            if ($('#draw_'+event.id) != event.markets[0]['bets']['X']) {
-                update_odds($('#draw_'+event.id), event.markets[0]['bets']['X'])
+            if ($('#draw_'+game.id) != game.markets[0]['bets']['X']) {
+                update_odds($('#draw_'+game.id), game.markets[0]['bets']['X'])
             }
-            if ($('#away_'+event.id) != event.markets[0]['bets']['2']) {
-                update_odds($('#away_'+event.id), event.markets[0]['bets']['2'])
+            if ($('#away_'+game.id) != game.markets[0]['bets']['2']) {
+                update_odds($('#away_'+game.id), game.markets[0]['bets']['2'])
             }
-            if ($('#state_'+event.id) != event.state) {
-                $('#state_'+event.id).html(event.state);
+            if ($('#state_'+game.id) != game.state) {
+                $('#state_'+game.id).html(game.state);
             }
         } else {
-            let row = '<tr id="event_'+event.id+'">'
-                + '<td id="time_'+event.id+'">'+event.time+'</td>'
-                + '<td>'+event.home_team+' - '+event.away_team+'</td>'
-                + '<td id="home_'+event.id+'">'+event.markets[0]['bets']['1']+'</td>'
-                + '<td id="draw_'+event.id+'">'+event.markets[0]['bets']['X']+'</td>'
-                + '<td id="away_'+event.id+'">'+event.markets[0]['bets']['2']+'</td>'
-                + '<td id="state_'+event.id+'">'+event.state+'</td>'
+            let row = '<tr id="game_'+game.id+'">'
+                + '<td id="time_'+game.id+'">'+game.time+'</td>'
+                + '<td>'+game.home_team+' - '+game.away_team+'</td>'
+                + '<td id="home_'+game.id+'">'+game.markets[0]['bets']['1']+'</td>'
+                + '<td id="draw_'+game.id+'">'+game.markets[0]['bets']['X']+'</td>'
+                + '<td id="away_'+game.id+'">'+game.markets[0]['bets']['2']+'</td>'
+                + '<td id="state_'+game.id+'">'+game.state+'</td>'
                 + '</tr>'
-            $('#events tbody').append(row);
+            $('#games tbody').append(row);
         }
     };
     function update_odds(element, odds) {

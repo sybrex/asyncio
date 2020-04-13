@@ -35,7 +35,7 @@ feed = Feed()
 
 @app.get('/')
 async def get(request: Request):
-    return templates.TemplateResponse('events.html', {'request': request})
+    return templates.TemplateResponse('games.html', {'request': request})
 
 
 @app.websocket_route('/ws', name='ws')
