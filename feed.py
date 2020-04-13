@@ -1,5 +1,4 @@
 import asyncio
-import socket
 import time
 import argparse
 import random
@@ -23,9 +22,11 @@ MARKETS = [
 DURATION = 5400
 # Delay between updates 1-5 sec
 DELAY = 5
+# Only one connection is allowed
+CLIENT = {'reader': None, 'writer': None}
 
 
-class FootballEvent:
+class Football:
     def __init__(self, id):
         self.id = id
         self.home_team = random.choice(TEAMS)
@@ -46,7 +47,7 @@ class FootballEvent:
             'markets': self.markets
         })
 
-    def update(self, seconds):
+    def random_update(self, seconds):
         self.state = random.choice(STATES)
         self.time = self.time + seconds
         if self.time > DURATION:
@@ -60,47 +61,48 @@ class FootballEvent:
                     self.markets[index]['bets'][bet] = new_odds if new_odds > 1 else odds
 
 
-async def run_event(loop, client, event):
-    print(f'{event.home_team} - {event.away_team} Time: {event.time} sec')
-    time.sleep(0.1)
-    for msg in range(100):
+async def run_game(game):
+    while True:
         delay = random.randint(1, DELAY)
         await asyncio.sleep(delay)
-        event.update(delay)
-        await loop.sock_sendall(client, str(event).encode('utf8'))
+        game.random_update(delay)
+        print(f'Game #{game.id} time {game.time} sec. updated {game.generated}')
+        if CLIENT['writer']:
+            try:
+                CLIENT['writer'].write(str(game).encode())
+                await CLIENT['writer'].drain()
+            except (BrokenPipeError, ConnectionResetError):
+                CLIENT['reader'] = None
+                CLIENT['writer'] = None
 
 
-async def handle_client(loop, client, events_count):
-    tasks = []
-    for i in range(1, events_count+1):
-        event = FootballEvent(i)
-        tasks.append(asyncio.create_task(run_event(loop, client, event)))
-    await asyncio.gather(*tasks)
+def handle_client(reader, writer):
+    CLIENT['reader'] = reader
+    CLIENT['writer'] = writer
+    print(f'Client connected {CLIENT}')
 
 
-async def run_server(loop, server, events_count):
-    while True:
-        client, _ = await loop.sock_accept(server)
-        loop.create_task(handle_client(loop, client, events_count))
+async def run_server(host, port, games_count):
+    server = await asyncio.start_server(handle_client, host, port)
+    addr = server.sockets[0].getsockname()
+    print(f'Serving on {addr}')
+
+    for id in range(games_count):
+        game = Football(id)
+        print(f'Game #{game.id} {game.home_team} - {game.away_team} Time: {game.time} sec')
+        asyncio.create_task(run_game(game))
+
+    async with server:
+        await server.serve_forever()
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--host', default='127.0.0.1', help='Host')
     parser.add_argument('--port', type=int, default=5000, help='Port')
-    parser.add_argument('--count', type=int, default=5, help='Number of events')
+    parser.add_argument('--count', type=int, default=5, help='Number of games')
     args = parser.parse_args()
-
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    server.bind((args.host, args.port))
-    server.listen(8)
-    server.setblocking(False)
-    try:
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(run_server(loop, server, args.count))
-    except KeyboardInterrupt:
-        server.close()
+    asyncio.run(run_server(args.host, args.port, args.count))
 
 
 if __name__ == '__main__':
