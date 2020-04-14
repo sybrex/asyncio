@@ -11,6 +11,7 @@
   </head>
   <body class="py-4">
     <div class="container-fluid">
+      <input id="host" type="hidden" value="{{ request.url.hostname }}:{{ request.url.port }}">
       <table id="games" class="table table-bordered table-sm">
         <thead>
           <tr>
