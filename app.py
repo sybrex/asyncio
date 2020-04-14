@@ -3,6 +3,7 @@ from fastapi import FastAPI, Request, WebSocket
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.endpoints import WebSocketEndpoint
+import settings
 
 
 class Feed:
@@ -10,7 +11,7 @@ class Feed:
         self.connections = []
 
     async def broadcast(self):
-        server, _ = await asyncio.open_connection('localhost', 5000)
+        server, _ = await asyncio.open_connection(settings.FEED_HOST, settings.FEED_PORT)
         while True:
             message = await server.read(1024)
             connections = []
