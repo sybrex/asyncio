@@ -1,4 +1,5 @@
 import asyncio
+import json
 from fastapi import FastAPI, Request, WebSocket
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -13,11 +14,14 @@ class Feed:
     async def broadcast(self):
         server, _ = await asyncio.open_connection(settings.FEED_HOST, settings.FEED_PORT)
         while True:
-            message = await server.read(1024)
+            data = await server.read(4096)
+            message = []
+            for line in data.decode().splitlines():
+                message.append(json.loads(line))
             connections = []
             while len(self.connections) > 0:
                 websocket = self.connections.pop()
-                await websocket.send_text(message.decode())
+                await websocket.send_json(message)
                 connections.append(websocket)
             self.connections = connections
 

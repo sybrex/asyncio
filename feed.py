@@ -69,7 +69,8 @@ async def run_game(game):
         print(f'Game #{game.id} time {game.time} sec. updated {game.generated}')
         if CLIENT['writer']:
             try:
-                CLIENT['writer'].write(str(game).encode())
+                message = f'{game}\n'
+                CLIENT['writer'].write(message.encode())
                 await CLIENT['writer'].drain()
             except (BrokenPipeError, ConnectionResetError):
                 CLIENT['reader'] = None
