@@ -1,5 +1,5 @@
 $(function() {
-    let ws = new WebSocket('ws://'+$('#host').val()+'/ws');
+    let ws = new WebSocket('wss://'+$('#host').val()+'/ws');
     ws.onmessage = function(message) {
         data = JSON.parse(message.data);
         data.forEach((game) => {
