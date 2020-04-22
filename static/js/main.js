@@ -47,8 +47,8 @@ function update_game(game) {
 
 function update_odds(element, odds) {
         if (element.html() != odds) {
-            element.html(odds);
             let color = element.html() > odds ? '#dc3545' : '#28a745';
+            element.html(odds);
             element.css({'background-color': color});
             element.animate({backgroundColor: '#fff'}, 1000);
         }
