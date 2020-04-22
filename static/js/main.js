@@ -9,6 +9,9 @@ $(function() {
 });
 
 function update_game(game) {
+    let server_delay = (game.imported - game.generated).toFixed(5);
+    let client_time = new Date();
+    let client_delay = (client_time.getTime() / 1000 - game.imported.toFixed(3)).toFixed(3);
     if ($('#game_'+game.id).length) {
         if ($('#time_'+game.id) != game.time) {
             $('#time_'+game.id).html(game.time);
@@ -25,6 +28,8 @@ function update_game(game) {
         if ($('#state_'+game.id) != game.state) {
             $('#state_'+game.id).html(game.state);
         }
+        $('#server_delay_'+game.id).html(server_delay);
+        $('#client_delay_'+game.id).html(client_delay);
     } else {
         let row = '<tr id="game_'+game.id+'">'
             + '<td id="time_'+game.id+'">'+game.time+'</td>'
@@ -33,6 +38,8 @@ function update_game(game) {
             + '<td id="draw_'+game.id+'">'+game.markets[0]['bets']['X']+'</td>'
             + '<td id="away_'+game.id+'">'+game.markets[0]['bets']['2']+'</td>'
             + '<td id="state_'+game.id+'">'+game.state+'</td>'
+            + '<td id="server_delay_'+game.id+'">'+server_delay+'</td>'
+            + '<td id="client_delay_'+game.id+'">'+client_delay+'</td>'
             + '</tr>'
         $('#games tbody').append(row);
     }

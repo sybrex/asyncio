@@ -1,5 +1,6 @@
 import asyncio
 import json
+import time
 from fastapi import FastAPI, Request, WebSocket
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -17,7 +18,9 @@ class Feed:
             data = await server.read(4096)
             message = []
             for line in data.decode().splitlines():
-                message.append(json.loads(line))
+                update = json.loads(line)
+                update['imported'] = time.time()
+                message.append(update)
             connections = []
             while len(self.connections) > 0:
                 websocket = self.connections.pop()
