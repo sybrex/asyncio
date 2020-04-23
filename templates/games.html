@@ -6,17 +6,16 @@
     <meta name="description" content="">
     <link rel="shortcut icon" href="{{ url_for('static', path='favicon.ico') }}">
     <title>Games</title>
-    <link href="{{ url_for('static', path='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', path='css/styles.css') }}" rel="stylesheet">
   </head>
-  <body class="py-4">
-    <div class="container-fluid">
+  <body>
+    <div>
       <input id="host" type="hidden" value="{{ request.url.hostname }}{% if request.url.port %}:{{ request.url.port}} {% endif %}">
-      <table id="games" class="table table-bordered table-sm">
+      <table id="games">
         <thead>
           <tr>
-            <th scope="col" style="width: 10%">Time (sec)</th>
-            <th scope="col" style="width: 20%">Game</th>
+            <th scope="col" style="width: 5%">Time</th>
+            <th scope="col" style="width: 25%">Game</th>
             <th scope="col" style="width: 10%">1</th>
             <th scope="col" style="width: 10%">X</th>
             <th scope="col" style="width: 10%">2</th>

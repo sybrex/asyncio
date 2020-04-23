@@ -1,9 +1,24 @@
-@media (min-width: 768px) {
-  .bd-placeholder-img-lg {
-    font-size: 3.5rem;
-  }
+body {
+  margin: 0px;
+  font-family: 'Courier New';
+  font-size: 12px;
 }
 
-.container-fluid {
-    padding: 0px;
+table, td, th {
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  padding: 5px;
+}
+
+th {
+  background-color: #344A5F;
+  color: white;
 }
