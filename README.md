@@ -24,4 +24,4 @@ Running the application
 pipenv run uvicorn app:app --reload
 ```
 
-For a live demo visit the [link](https://viktors.info/labs/asyncio)
+For a live demo visit the [link](https://asyncio.viktors.info)
